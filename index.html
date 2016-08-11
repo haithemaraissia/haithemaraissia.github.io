@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
+
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>-->
+
+
+
+
+
+    <!-- Date Bootstrap -->
+    <!--<script type="text/javascript" src="//code.jquery.com/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/src/js/bootstrap-datetimepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/a549aa8780dbda16f6cff545aeabc3d71073911e/build/css/bootstrap-datetimepicker.css">-->
+    <!-- Date Bootstrap -->
+
+
+
+
+
+    <!-- amCharts -->
+    <script src="http://www.amcharts.com/lib/3/amcharts.js" type="text/javascript"></script>
+    <script src="http://www.amcharts.com/lib/3/serial.js" type="text/javascript"></script>
+    <!-- amCharts -->
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+
+
+
+    <!--google chart -->
+    <script src="http://bouil.github.io/angular-google-chart/ng-google-chart.js"></script>
+    <!--google chart -->
+
+
+
+    <script src="script.js"></script>
+    <style>
+        #googleChart div div {
+            margin: auto;
+        }
+    </style>
+
+
+
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body ng-app="myApp">
+    Start :  {{ startDate }}
+    <p>
+        HEllo There
+        {{StartTest}}
+    </p>
+    <div class="row" id="DateTime">
+        <div class="col-md-offset-2 col-md-4">
+            <h6>From</h6>
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker15">
+                    <input type="text" class="form-control" datepicker="" ng-model="startDate" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon-calendar glyphicon">
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="row" id="DateTime">
+                <div class="col-md-offset-2 col-md-4">
+                    <h6>From</h6>
+                    <div class="form-group">
+                        <div class="input-group date" id="datetimepicker1">
+                            <input type="text" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-2 col-md-4">
+                    <h6>To</h6>
+                    <div class="form-group">
+                        <div class="input-group date" id="datetimepicker2">
+                            <input type="text" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-controller="myCtrl" class="row">
+                <div class="col-md-12" style="padding-top:25px">
+                    <div id="Symbols" class="col-md-8 text-center">
+                        <label>  Symbol </label>
+                        <select ng-model="selectedSymbol" ng-options="x.Symbol for x in Symbols" ng-change="onSymbolChanged()"></select>
+                    </div>
+
+                    <div id="Pattern" class="col-md-4 text-center">
+                        <label> Trading Pattern </label>
+                        <select ng-model="selectedPattern" ng-options="x.id for x in patterns" ng-change="onPatternChanged()"></select>
+                    </div>
+
+                </div>
+
+                <div id="chart" class="col-md-12 ">
+                    <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;"></div>
+                </div>
+                <div id="test">
+                    <!-- <p> Test: {{APICall}} </p>  -->
+                </div>
+            </div>
+        </div>
+        <div ng-controller="PieCtrl" class="row">
+            <div class="col-md-12 text-center; margin:auto">
+                <div id="googleChart" google-chart chart="chart" style=" border:1px inset black;padding:0;width:100%; margin: auto">
+                </div>
+                <div>
+                    <h2>Chart data as JSON:</h2>
+                    <pre style='clear:both; background-color: lightgray;'>{{chart|json}}</pre>
+                </div>
+            </div>
+        </div>
+        <div id="ToDo" class="row">
+            <p>
+                TO DO:
+                <ul>
+                    <li>
+                        LIST OF STOCKS Seesms like Different market have differnt stocks; check nasdaq.com
+                    </li>
+                    <li>
+                        DATE
+                    </li>
+                    <li>
+                        CHARTS
+                    </li>
+                </ul>
+            <p>The $http service requests a page on the server, and the response is set as the value of the "myWelcome" variable.</p>
+
+
+
+
+
+        </div>
+        <div id="Statics" class="row">
+            <h1>You selected:</h1>
+            <ul>
+                <li>
+                    <p>Symbol: {{selectedSymbol.Symbol}}</p>
+                </li>
+                <li>
+                    <p>Name: {{selectedSymbol.Name}}</p>
+                </li>
+                <li>
+                    <p>Last Sale: {{selectedSymbol.LastSale}}</p>
+                </li>
+                <li>
+                    <p>Market Cap: {{selectedSymbol.MarketCap}}</p>
+                </li>
+                <li>
+                    <p>IPOyear: {{selectedSymbol.IPOyear}}</p>
+                </li>
+                <li>
+                    <p>Sector: {{selectedSymbol.Sector}}</p>
+                </li>
+                <li>
+                    <p>industry: {{selectedSymbol.Industry}}</p>
+                </li>
+                <li>
+                    <p>Summary: {{selectedSymbol.Summary}}</p>
+                </li>
+                <li>
+                    <p>Quote: {{selectedSymbol.Quote}}</p>
+                </li>
+            </ul>
+
+            <p>Name: {{selectedSymbol.name}}</p>
+            <table>
+                <tr>
+                    <td>Date</td>
+                    <td>Open</td>
+                    <td>High</td>
+                    <td>x.Low</td>
+                    <td>x.Close</td>
+                    <td>x.Volume</td>
+                    <td>x.Adj_Close</td>
+                </tr>
+                <tr ng-repeat="x in quotes" align="center">
+                    <td>{{ x.Date}}</td>
+                    <td>{{ x.Open}}</td>
+                    <td>{{ x.High}}</td>
+                    <td>{{ x.Low}}</td>
+                    <td>{{ x.Close}}</td>
+                    <td>{{ x.Volume}}</td>
+                    <td>{{ x.Adj_Close}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
