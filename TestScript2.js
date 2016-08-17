@@ -857,12 +857,11 @@ var chart = AmCharts.makeChart("chartdiv", {
 
 
 var app = angular.module('myApp', ['googlechart']);
-
-
-
 app.controller('myCtrl', function ($scope, $http, $window, sharedProperties) {
 
     //  $scope.loading = true;
+
+    //From www.nasdaq.com/screening/companies-by-name.aspx?letter=A&render=download
     $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20csv%20where%20url%3D'www.nasdaq.com%2Fscreening%2Fcompanies-by-name.aspx%3Fletter%3DA%26render%3Ddownload'%20and%20columns%3D'Symbol%2CName%2CLastSale%2CMarketCap%2CIPOyear%2CSector%2CIndustry%2CSummary%2CQuote'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys")
       .then(function (response) {
           if (response.data.query.results != null) {
@@ -888,21 +887,15 @@ app.controller('myCtrl', function ($scope, $http, $window, sharedProperties) {
           ];
 
           $scope.loading = true;
+
+
       });
 
-    function constructApi(stock) {
-        var apiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-        //TO DELETE JUST FOR TESTING
-        $scope.APICall = apiCall;
-        //TO DELETE JUST FOR TESTING
-        return apiCall;
-    }
 
     $scope.onSymbolChanged = function () {
-
         $scope.Symbol = $scope.selectedSymbol.Symbol;
         $scope.loading = false;
-        $http.get(constructApi($scope.selectedSymbol.Symbol))
+        $http.get(ConstructAPI($scope.selectedSymbol.Symbol))
           .then(function (apiResponse) {
 
 
@@ -934,8 +927,9 @@ app.controller('myCtrl', function ($scope, $http, $window, sharedProperties) {
 
 
 
+
               $window.chart.dataProvider = [];
-              $scope.run = true;
+             // $scope.run = true;
 
               var positiveCount = 0;
               var negativeCount = 0;
@@ -965,182 +959,185 @@ app.controller('myCtrl', function ($scope, $http, $window, sharedProperties) {
 
 
 
-                      //Every Day
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        >
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          positiveCount += 1;
-                      }
+                  //Every Day
+                  if (
+                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                    >
+                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                      positiveCount += 1;
+                  }
 
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        ==
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          neturalCount += 1;
-                      }
+                  if (
+                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                    ==
+                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                      neturalCount += 1;
+                  }
 
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        <
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          negativeCount += 1;
-                      }
-                      //Every Day
-
-
-
-                      ////Every Low
-                      //if (Low === 0) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        Low = 1;
-                      //    }
-                      //}
-
-                      //if (low == 1) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
-
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    ==
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
-
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
-
-                      //    Low = 0;
-                      //}
-                      ////Every Low
-
-                      ////Every High
-                      //if (High == 0) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        High = 1;
-                      //    }
-                      //}
-
-                      //if (High == 1) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
-
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    ==
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
-
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
-
-                      //    High = 0;
-                      //}
-                      ////Every High
+                  if (
+                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                    <
+                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                      negativeCount += 1;
+                  }
+                  //Every Day
 
 
 
-                      ////Every 3 Day
-                      //if (dateCount < 2) {
-                      //    dateCount++;
-                      //}
-                      //else {
-                      //    //Every Day
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
-                      //      >
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
+                  ////Every Low
+                  //if (Low === 0) {
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    <
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        Low = 1;
+                  //    }
+                  //}
 
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
-                      //      ==
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
+                  //if (low == 1) {
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    >
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        positiveCount += 1;
+                  //    }
 
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //      <
-                      //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
-                      //    //Every Day
-                      //    dateCount = 0;
-                      //}
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    ==
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        neturalCount += 1;
+                  //    }
 
-                      ////Every 3 Day
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    <
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        negativeCount += 1;
+                  //    }
+
+                  //    Low = 0;
+                  //}
+                  ////Every Low
+
+                  ////Every High
+                  //if (High == 0) {
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    >
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        High = 1;
+                  //    }
+                  //}
+
+                  //if (High == 1) {
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    >
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        positiveCount += 1;
+                  //    }
+
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    ==
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        neturalCount += 1;
+                  //    }
+
+                  //    if (
+                  //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //    <
+                  //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        negativeCount += 1;
+                  //    }
+
+                  //    High = 0;
+                  //}
+                  ////Every High
+
+
+
+                  ////Every 3 Day
+                  //if (dateCount < 2) {
+                  //    dateCount++;
+                  //}
+                  //else {
+                  //    //Every Day
+                  //    if (
+                  //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
+                  //      >
+                  //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                  //        positiveCount += 1;
+                  //    }
+
+                  //    if (
+                  //      parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
+                  //      ==
+                  //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                  //        negativeCount += 1;
+                  //    }
+
+                  //    if (
+                  //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                  //      <
+                  //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                  //        neturalCount += 1;
+                  //    }
+                  //    //Every Day
+                  //    dateCount = 0;
+                  //}
+
+                  ////Every 3 Day
 
                   }
+
               }
+                  $window.chart.validateData();
+                  //$window.chart.validateData();
+                  //$scope.Symbol = JSON.stringify( $window.chart.dataProvider);  
 
-              $window.chart.validateData();
-              //$window.chart.validateData();
-              //$scope.Symbol = JSON.stringify( $window.chart.dataProvider);  
-
-              $scope.loading = true;
-              console.log(positiveCount);
-              console.log(negativeCount);
-              console.log(neturalCount);
-
-   
-
-              sharedProperties.setPositive(positiveCount);
-                sharedProperties.setNegative(negativeCount);
-                sharedProperties.setNeutral(neturalCount);
+                  $scope.loading = true;
+                  console.log(positiveCount);
+                  console.log(negativeCount);
+                  console.log(neturalCount);
 
 
+      
 
-              $scope.$apply();
 
+                  $scope.$apply(function () {
+                      $scope.Positive = positiveCount;
+                  sharedProperties.setPositive(positiveCount);
+                  sharedProperties.setNegative(negativeCount);
+                  sharedProperties.setNeutral(neturalCount);
 
-       
-
+            });
+            //   $scope.$apply();
 
         });
 
-
-
-
-
-    };
+          };
 
     $scope.onPatternChanged = function () {
         //  $scope.Symbol = $scope.selectedSymbol.Symbol;
 
     };
-
     $scope.GrabData = function () {
-        $http.get(constructApi($scope.Symbol))
+        $http.get(ConstructAPI($scope.Symbol))
           .then(function (response) {
               $scope.quotes = response.data.query.results.quote;
           });
     };
+
+
+
+
+    function ConstructAPI(Stock) {
+        var ApiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + Stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+        $scope.APICall = ApiCall;
+        return ApiCall;
+    }
 });
 
 
@@ -1149,8 +1146,8 @@ app.controller('myCtrl', function ($scope, $http, $window, sharedProperties) {
 
 app.controller('PieCtrl', function ($scope, sharedProperties) {
 
-
     $scope.Positive = sharedProperties.getPositive();
+   alert(sharedProperties.getPositive());
 
     var chart1 = {};
     chart1.type = "PieChart";
@@ -1161,21 +1158,6 @@ app.controller('PieCtrl', function ($scope, sharedProperties) {
       ['Negative', sharedProperties.getNegative()],
       ['Neutral', sharedProperties.getNeutral()]
     ];
-
-
-
-
-    //chart1.type = "PieChart";
-    //chart1.cssStyle = "margin:auto";
-    //chart1.data = [
-    //  ['Gain', 'Percentage'],
-    //  ['Positive', '20'],
-    //  ['Negative', '30'],
-    //  ['Neutral', '50']
-    //];
-
-
-
     // chart1.data.push(['Neutral', sharedProperties.getNeutral()]);
     chart1.options = {
         title: "Test",
@@ -1201,14 +1183,6 @@ app.controller('PieCtrl', function ($scope, sharedProperties) {
     $scope.chart = chart1;
 
 
-
-    //    $scope.chart.data[1][1] = value["Positive"];
-    //    $scope.chart.data[2][1] = value["Negative"];
-    //    $scope.chart.data[3][1] = value["Neutral"];
-
-
-
-
     //$scope.$watch(function () {
 
     //    return {
@@ -1220,14 +1194,30 @@ app.controller('PieCtrl', function ($scope, sharedProperties) {
     //    $scope.chart.data[1][1] = value["Positive"];
     //    $scope.chart.data[2][1] = value["Negative"];
     //    $scope.chart.data[3][1] = value["Neutral"];
-
-
-
-    // alert(value["Positive"]);
-    //alert(value["Negative"]);
-    //alert(value["Neutral"]);
-    //$scope.Positive = value;
+    //       alert(value["Positive"]);
+    //     alert(value["Negative"]);
+    //     alert(value["Neutral"]);
+    //    //$scope.Positive = value;
     //});
+
+
+
+    //$scope.$watch(
+    //        function () {
+    //            return $scope.Positive;
+    //        },
+    //        function (newValue, oldValue) {
+    //            if (!angular.equals(oldValue, newValue)) {
+    //                $scope.chart.data[1][1] = newValue;
+    //                console.log("new Value");
+    //                console.log(newValue);
+    //                console.log("oldValue");
+    //                console.log(oldValue);
+    //                console.log($scope.Positive);
+
+    //            }
+    //        },
+    //        true);
 
 
 
@@ -1237,11 +1227,6 @@ app.controller('PieCtrl', function ($scope, sharedProperties) {
     //  $scope.aa=1*$scope.chart.data[1][1];
     // $scope.bb=1*$scope.chart.data[2][1];
     //  $scope.cc=1*$scope.chart.data[3][1];
-
-
-
-    $scope.Positive = sharedProperties.getPositive();
-    alert(sharedProperties.getPositive());
 });
 
 app.service('sharedProperties', function () {
@@ -1304,8 +1289,7 @@ app.directive('datepicker', function () {
     };
 });
 
-
-////DateTime
+//DateTime
 //$(window).load(function () {
 //    $('#datetimepicker1').datetimepicker({
 //        viewMode: 'days',
