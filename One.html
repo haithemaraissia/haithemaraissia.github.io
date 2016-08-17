@@ -16,7 +16,7 @@
     <!-- amCharts -->
 
 
-    <script src="Testscript3.js"></script>
+    <script src="simple.js"></script>
     <style>
         #googleChart div div {
             margin: auto;
@@ -84,7 +84,10 @@
 
                 <p ng-show="false">I am not visible.</p>
 
-                <p>Positive in myCtrl : {{Positive}}</p>
+            <p>Positive : {{Positive}}</p>
+            <p>Negative : {{Negative}}</p>
+            <p>Neutral : {{Neutral}}</p>
+
                 <!--<div ng-hide="true" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; z-index: 1; background-color: #fefefe;">
                     <div id="floatingCirclesG">
                         <div id="frotateG_01" class="f_circleG"></div>
@@ -330,7 +333,6 @@
 
         <div class="row">
             <div class="col-md-12 text-center; margin:auto">
-                <p>Positive in PieCtrl : {{Positive}}</p>
                 <div id="googleChart" google-chart chart="chart" style="border: 1px inset black; padding: 0; width: 100%; margin: auto">
                 </div>
                 <div>

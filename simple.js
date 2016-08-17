@@ -886,13 +886,10 @@ app.controller('myCtrl', function ($scope, $http, $window) {
               { id: "4", name: "Every 1 high" }
           ];
 
-          // $scope.loading = true;
-
 
           $scope.Positive = 30;
           $scope.Negative = 30;
           $scope.Neutral = 30;
-
 
           var chart1 = {};
           chart1.type = "PieChart";
@@ -903,9 +900,8 @@ app.controller('myCtrl', function ($scope, $http, $window) {
             ['Negative', $scope.Negative],
             ['Neutral', $scope.Neutral]
           ];
-          // chart1.data.push(['Neutral', sharedProperties.getNeutral()]);
           chart1.options = {
-              title: "Test",
+              title: "Statistics",
               displayExactValues: true,
               width: 400,
               height: 200,
@@ -927,38 +923,7 @@ app.controller('myCtrl', function ($scope, $http, $window) {
 
           $scope.chart = chart1;
 
-
-
-
       });
-
-
-
-
-
-    //$scope.Positive = sharedProperties.getPositive();
-    //   alert(sharedProperties.getPositive());
-
-
-
-    //$scope.$watch(function () {
-
-    //    return {
-    //        Positive: sharedProperties.getPositive(),
-    //        Negative: sharedProperties.getNegative(),
-    //        Neutral: sharedProperties.getNeutral()
-    //    };
-    //}, function (value) {
-    //    $scope.chart.data[1][1] = value["Positive"];
-    //    $scope.chart.data[2][1] = value["Negative"];
-    //    $scope.chart.data[3][1] = value["Neutral"];
-    //       alert(value["Positive"]);
-    //     alert(value["Negative"]);
-    //     alert(value["Neutral"]);
-    //    //$scope.Positive = value;
-    //});
-
-
 
 
 
@@ -967,39 +932,26 @@ app.controller('myCtrl', function ($scope, $http, $window) {
         $scope.loading = false;
         $http.get(ConstructAPI($scope.selectedSymbol.Symbol))
           .then(function (apiResponse) {
-
-
-
-
-              //console.log(constructApi($scope.selectedSymbol.Symbol));
-              //alert(apiResponse == null);
               var response;
-
-
               if (apiResponse == null) {
                   $http.get("Data/Cached/Symbol/Sample/Y.json")
                       .then(function (cacheResponse) {
                           response = cacheResponse;
-                          //TO DELETE
                           $scope.dataStatus = "DATA FROM SAMPLE";
-                          // console.log("DATA LIVE");
-                          //console.log("DATA FROM SAMPLE");
                       });
               } else {
                   response = apiResponse;
-
-                  //TO DELETE
                   $scope.dataStatus = "DATA LIVE";
-                  // console.log("DATA LIVE");
-
-
               }
 
 
 
 
               $window.chart.dataProvider = [];
-              // $scope.run = true;
+
+
+
+
 
               var positiveCount = 0;
               var negativeCount = 0;
@@ -1167,28 +1119,10 @@ app.controller('myCtrl', function ($scope, $http, $window) {
               //$window.chart.validateData();
               //$scope.Symbol = JSON.stringify( $window.chart.dataProvider);  
 
-              $scope.loading = true;
-              console.log(positiveCount);
-              console.log(negativeCount);
-              console.log(neturalCount);
 
-
-
-
-
-              //      $scope.$apply(function () {
-              //          $scope.Positive = positiveCount;
-              //      sharedProperties.setPositive(positiveCount);
-              //      sharedProperties.setNegative(negativeCount);
-              //      sharedProperties.setNeutral(neturalCount);
-
-              //});
-              //   $scope.$apply();
-
-
-
-
-
+              $scope.Positive = positiveCount;
+              $scope.Negative = negativeCount;
+              $scope.Neutral = neturalCount;
 
               $scope.chart.data[1][1] = positiveCount;
               $scope.chart.data[2][1] = negativeCount;
@@ -1210,8 +1144,6 @@ app.controller('myCtrl', function ($scope, $http, $window) {
     };
 
 
-
-
     function ConstructAPI(Stock) {
         var ApiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + Stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
         $scope.APICall = ApiCall;
@@ -1220,133 +1152,6 @@ app.controller('myCtrl', function ($scope, $http, $window) {
 });
 
 
-// Code goes here
-
-
-//app.controller('PieCtrl', function ($scope, sharedProperties) {
-
-//    $scope.Positive = sharedProperties.getPositive();
-//   alert(sharedProperties.getPositive());
-
-//    var chart1 = {};
-//    chart1.type = "PieChart";
-//    chart1.cssStyle = "margin:auto";
-//    chart1.data = [
-//      ['Gain', 'Percentage'],
-//      ['Positive', $scope.Positive],
-//      ['Negative', sharedProperties.getNegative()],
-//      ['Neutral', sharedProperties.getNeutral()]
-//    ];
-//    // chart1.data.push(['Neutral', sharedProperties.getNeutral()]);
-//    chart1.options = {
-//        title: "Test",
-//        displayExactValues: true,
-//        width: 400,
-//        height: 200,
-//        is3D: true,
-//        chartArea: {
-//            left: 10,
-//            top: 10,
-//            bottom: 0,
-//            height: "100%"
-//        }
-//    };
-
-//    chart1.formatters = {
-//        number: [{
-//            columnNum: 1,
-//            pattern: "$ #,##0.00"
-//        }]
-//    };
-
-//    $scope.chart = chart1;
-
-
-//    //$scope.$watch(function () {
-
-//    //    return {
-//    //        Positive: sharedProperties.getPositive(),
-//    //        Negative: sharedProperties.getNegative(),
-//    //        Neutral: sharedProperties.getNeutral()
-//    //    };
-//    //}, function (value) {
-//    //    $scope.chart.data[1][1] = value["Positive"];
-//    //    $scope.chart.data[2][1] = value["Negative"];
-//    //    $scope.chart.data[3][1] = value["Neutral"];
-//    //       alert(value["Positive"]);
-//    //     alert(value["Negative"]);
-//    //     alert(value["Neutral"]);
-//    //    //$scope.Positive = value;
-//    //});
-
-
-
-//    //$scope.$watch(
-//    //        function () {
-//    //            return $scope.Positive;
-//    //        },
-//    //        function (newValue, oldValue) {
-//    //            if (!angular.equals(oldValue, newValue)) {
-//    //                $scope.chart.data[1][1] = newValue;
-//    //                console.log("new Value");
-//    //                console.log(newValue);
-//    //                console.log("oldValue");
-//    //                console.log(oldValue);
-//    //                console.log($scope.Positive);
-
-//    //            }
-//    //        },
-//    //        true);
-
-
-
-
-
-
-//    //  $scope.aa=1*$scope.chart.data[1][1];
-//    // $scope.bb=1*$scope.chart.data[2][1];
-//    //  $scope.cc=1*$scope.chart.data[3][1];
-//});
-
-//app.service('sharedProperties', function () {
-
-
-//    var positive = 30;
-//    var negative = 30;
-//    var neutral = 30;
-
-//    var startDate = new Date();
-
-
-//    return {
-//        getPositive: function () {
-//            return positive;
-//        },
-//        setPositive: function (value) {
-//            positive = value;
-//        },
-//        getNegative: function () {
-//            return negative;
-//        },
-//        setNegative: function (value) {
-//            negative = value;
-//        },
-//        getNeutral: function () {
-//            return neutral;
-//        },
-//        setNeutral: function (value) {
-//            neutral = value;
-//        },
-
-
-//        getStartDate: function () {
-//            return startDate;
-//        },
-//        setStartDate: function (value) {
-//            startDate = value;
-//        }
-//    };
-//});
 
 app.directive('datepicker', function () {
     return {
