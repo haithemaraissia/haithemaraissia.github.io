@@ -1,5 +1,7 @@
 ﻿/// <reference path="ThirdParty/amcharts.js" />
 /// <reference path="ThirdParty/serial.js" />
+/// <reference path="~/Scripts/angular-scenario.js" />
+/// <reference path="~/Scripts/angular-mocks.js" />
 // Code goes here
 
 
@@ -856,14 +858,55 @@ var chart = AmCharts.makeChart("chartdiv", {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var app = angular.module('myApp', ['googlechart']);
+
 app.controller('myCtrl', function ($scope, $http, $window) {
 
-    //  $scope.loading = true;
+    $scope.loading = true;
 
-    //From www.nasdaq.com/screening/companies-by-name.aspx?letter=A&render=download
     $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20csv%20where%20url%3D'www.nasdaq.com%2Fscreening%2Fcompanies-by-name.aspx%3Fletter%3DA%26render%3Ddownload'%20and%20columns%3D'Symbol%2CName%2CLastSale%2CMarketCap%2CIPOyear%2CSector%2CIndustry%2CSummary%2CQuote'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys")
-      .then(function (response) {
+        .then(function (response) {
           if (response.data.query.results != null) {
               $scope.cache = true;
               $scope.live = false;
@@ -917,218 +960,221 @@ app.controller('myCtrl', function ($scope, $http, $window) {
           chart1.formatters = {
               number: [{
                   columnNum: 1,
-                  pattern: "$ #,##0.00"
+                  pattern: " #,##0.00"
               }]
           };
 
           $scope.chart = chart1;
-
+         
+      })
+        .finally(function () {
+            $("#spinner").hide();
       });
 
-
+    function constructApi(stock) {
+        var apiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+        $scope.APICall = apiCall;
+        return apiCall;
+    }
 
     $scope.onSymbolChanged = function () {
+        $("#spinner").show();
         $scope.Symbol = $scope.selectedSymbol.Symbol;
-        $scope.loading = false;
-        $http.get(ConstructAPI($scope.selectedSymbol.Symbol))
-          .then(function (apiResponse) {
-              var response;
-              if (apiResponse == null) {
-                  $http.get("Data/Cached/Symbol/Sample/Y.json")
-                      .then(function (cacheResponse) {
-                          response = cacheResponse;
-                          $scope.dataStatus = "DATA FROM SAMPLE";
-                      });
-              } else {
-                  response = apiResponse;
-                  $scope.dataStatus = "DATA LIVE";
-              }
+        $http.get(constructApi($scope.selectedSymbol.Symbol))
+            .then(function(apiResponse) {
+                var response;
+                if (apiResponse == null) {
+                    $http
+                        .get("Data/Cached/Symbol/Sample/Y.json")
+                        .then(function(cacheResponse) {
+                            response = cacheResponse;
+                            $scope.dataStatus = "DATA FROM SAMPLE";
+                        });
+                } else {
+                    response = apiResponse;
+                    $scope.dataStatus = "DATA LIVE";
+                }
+
+
+                $window.chart.dataProvider = [];
+                var positiveCount = 0;
+                var negativeCount = 0;
+                var neturalCount = 0;
 
 
 
 
-              $window.chart.dataProvider = [];
 
 
 
 
+                //Every Low
+                var low = 0;
+                //Every High
+                var high = 0;
+                //Today
+                var dateCount = 0;
 
-              var positiveCount = 0;
-              var negativeCount = 0;
-              var neturalCount = 0;
-
-              //Every Low
-              var Low = 0;
-              //Every High
-              var High = 0;
-              //Today
-              var dateCount = 0;
-
-
-              console.log(response.data.query.results != null);
-
-              if (response.data.query.results != null) {
-
-                  $scope.quotes = response.data.query.results.quote;
-                  for (var i = 0; i < response.data.query.results.quote.length; i++) {
-                      $window.chart.dataProvider.push({
-                          "date": response.data.query.results.quote[i].Date,
-                          "open": parseFloat(response.data.query.results.quote[i].Open).toFixed(2),
-                          "high": parseFloat(response.data.query.results.quote[i].High).toFixed(2),
-                          "low": parseFloat(response.data.query.results.quote[i].Low).toFixed(2),
-                          "close": parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      });
+                if (response.data.query.results != null) {
+                    $scope.quotes = response.data.query.results.quote;
+                    for (var i = 0; i < response.data.query.results.quote.length; i++) {
+                        $window.chart.dataProvider.push({
+                            "date": response.data.query.results.quote[i].Date,
+                            "open": parseFloat(response.data.query.results.quote[i].Open).toFixed(2),
+                            "high": parseFloat(response.data.query.results.quote[i].High).toFixed(2),
+                            "low": parseFloat(response.data.query.results.quote[i].Low).toFixed(2),
+                            "close": parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        });
 
 
+                        //******************************Every Day******************************//
+                        if (
+                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                >
+                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                            positiveCount += 1;
+                        }
 
-                      //Every Day
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        >
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          positiveCount += 1;
-                      }
+                        if (
+                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                ===
+                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                            neturalCount += 1;
+                        }
 
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        ==
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          neturalCount += 1;
-                      }
-
-                      if (
-                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        <
-                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                          negativeCount += 1;
-                      }
-                      //Every Day
+                        if (
+                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                <
+                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                            negativeCount += 1;
+                        }
+                        //******************************Every Day******************************//
 
 
 
-                      ////Every Low
-                      //if (Low === 0) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        Low = 1;
-                      //    }
-                      //}
 
-                      //if (low == 1) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
+////Every Low
+                        //if (Low === 0) {
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    <
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        Low = 1;
+                        //    }
+                        //}
 
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    ==
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
+                        //if (low == 1) {
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    >
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        positiveCount += 1;
+                        //    }
 
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    ==
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        neturalCount += 1;
+                        //    }
 
-                      //    Low = 0;
-                      //}
-                      ////Every Low
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    <
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        negativeCount += 1;
+                        //    }
 
-                      ////Every High
-                      //if (High == 0) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        High = 1;
-                      //    }
-                      //}
+                        //    Low = 0;
+                        //}
+                        ////Every Low
 
-                      //if (High == 1) {
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    >
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
+                        ////Every High
+                        //if (High == 0) {
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    >
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        High = 1;
+                        //    }
+                        //}
 
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    ==
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
+                        //if (High == 1) {
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    >
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        positiveCount += 1;
+                        //    }
 
-                      //    if (
-                      //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //    <
-                      //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    ==
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        neturalCount += 1;
+                        //    }
 
-                      //    High = 0;
-                      //}
-                      ////Every High
+                        //    if (
+                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //    <
+                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        negativeCount += 1;
+                        //    }
 
-
-
-                      ////Every 3 Day
-                      //if (dateCount < 2) {
-                      //    dateCount++;
-                      //}
-                      //else {
-                      //    //Every Day
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
-                      //      >
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                      //        positiveCount += 1;
-                      //    }
-
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
-                      //      ==
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                      //        negativeCount += 1;
-                      //    }
-
-                      //    if (
-                      //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                      //      <
-                      //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                      //        neturalCount += 1;
-                      //    }
-                      //    //Every Day
-                      //    dateCount = 0;
-                      //}
-
-                      ////Every 3 Day
-
-                  }
-
-              }
-              $window.chart.validateData();
-              //$window.chart.validateData();
-              //$scope.Symbol = JSON.stringify( $window.chart.dataProvider);  
+                        //    High = 0;
+                        //}
+                        ////Every High
 
 
-              $scope.Positive = positiveCount;
-              $scope.Negative = negativeCount;
-              $scope.Neutral = neturalCount;
+////Every 3 Day
+                        //if (dateCount < 2) {
+                        //    dateCount++;
+                        //}
+                        //else {
+                        //    //Every Day
+                        //    if (
+                        //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
+                        //      >
+                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                        //        positiveCount += 1;
+                        //    }
 
-              $scope.chart.data[1][1] = positiveCount;
-              $scope.chart.data[2][1] = negativeCount;
-              $scope.chart.data[3][1] = neturalCount;
+                        //    if (
+                        //      parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
+                        //      ==
+                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                        //        negativeCount += 1;
+                        //    }
 
-          });
+                        //    if (
+                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                        //      <
+                        //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                        //        neturalCount += 1;
+                        //    }
+                        //    //Every Day
+                        //    dateCount = 0;
+                        //}
+
+                        ////Every 3 Day
+
+                    }
+
+                }
+
+                $window.chart.validateData();
+
+                $scope.Positive = positiveCount;
+                $scope.Negative = negativeCount;
+                $scope.Neutral = neturalCount;
+
+                $scope.chart.data[1][1] = positiveCount;
+                $scope.chart.data[2][1] = negativeCount;
+                $scope.chart.data[3][1] = neturalCount;
+            })
+            .finally(function () {
+            $("#spinner").hide();
+        });
 
     };
 
@@ -1136,26 +1182,21 @@ app.controller('myCtrl', function ($scope, $http, $window) {
         //  $scope.Symbol = $scope.selectedSymbol.Symbol;
 
     };
+
+
     $scope.GrabData = function () {
-        $http.get(ConstructAPI($scope.Symbol))
+        $http.get(constructApi($scope.Symbol))
           .then(function (response) {
               $scope.quotes = response.data.query.results.quote;
           });
     };
-
-
-    function ConstructAPI(Stock) {
-        var ApiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + Stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-        $scope.APICall = ApiCall;
-        return ApiCall;
-    }
 });
 
 
 
 app.directive('datepicker', function () {
     return {
-
+       // scope: true,
 
         link: function (scope, el, attr) {
 
@@ -1164,8 +1205,14 @@ app.directive('datepicker', function () {
                 viewMode: 'days',
                 format: 'DD/MM/YYYY',
                 onSelect: function (dateText) {
-                    scope.startDate = dateText;
-                    alert(dateText);
+
+                    var fieldName = el.attr('name');
+                    if (fieldName === 'Start') {
+                        scope.startDate = dateText;
+                    }
+                    if (fieldName === 'End') {
+                        scope.endDate = dateText;
+                    }
 
                 }
             });
@@ -1183,4 +1230,6 @@ app.directive('datepicker', function () {
 //        viewMode: 'days',
 //        format: 'DD/MM/YYYY'
 //    });
-//}); //]]>
+//});
+
+

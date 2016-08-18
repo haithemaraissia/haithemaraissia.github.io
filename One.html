@@ -4,8 +4,9 @@
 
 
     <script src="Scripts/angular.min.js"></script>
-    <script src="Scripts/jquery-1.12.4.js"></script>
+    <script src="Scripts/jquery-3.1.0.js"></script>
     <script src="Scripts/jquery-ui-1.12.0.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
 
     <!--google chart -->
     <script src="http://bouil.github.io/angular-google-chart/ng-google-chart.js"></script>
@@ -16,6 +17,8 @@
     <!-- amCharts -->
 
 
+
+
     <script src="simple.js"></script>
     <style>
         #googleChart div div {
@@ -24,38 +27,237 @@
     </style>
 
 
+    <!-- Spinner Style -->
+    <style>
+        #floatingCirclesG {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 51px;
+            height: 51px;
+            margin: auto;
+            transform: scale(0.6);
+            -o-transform: scale(0.6);
+            -ms-transform: scale(0.6);
+            -webkit-transform: scale(0.6);
+            -moz-transform: scale(0.6);
+        }
+
+        .f_circleG {
+            position: absolute;
+            background-color: rgb(255, 255, 255);
+            height: 9px;
+            width: 9px;
+            border-radius: 5px;
+            -o-border-radius: 5px;
+            -ms-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            animation-name: f_fadeG;
+            -o-animation-name: f_fadeG;
+            -ms-animation-name: f_fadeG;
+            -webkit-animation-name: f_fadeG;
+            -moz-animation-name: f_fadeG;
+            animation-duration: 0.622s;
+            -o-animation-duration: 0.622s;
+            -ms-animation-duration: 0.622s;
+            -webkit-animation-duration: 0.622s;
+            -moz-animation-duration: 0.622s;
+            animation-iteration-count: infinite;
+            -o-animation-iteration-count: infinite;
+            -ms-animation-iteration-count: infinite;
+            -webkit-animation-iteration-count: infinite;
+            -moz-animation-iteration-count: infinite;
+            animation-direction: normal;
+            -o-animation-direction: normal;
+            -ms-animation-direction: normal;
+            -webkit-animation-direction: normal;
+            -moz-animation-direction: normal;
+        }
+
+        #frotateG_01 {
+            left: 0;
+            top: 21px;
+            animation-delay: 0.2295s;
+            -o-animation-delay: 0.2295s;
+            -ms-animation-delay: 0.2295s;
+            -webkit-animation-delay: 0.2295s;
+            -moz-animation-delay: 0.2295s;
+        }
+
+        #frotateG_02 {
+            left: 6px;
+            top: 6px;
+            animation-delay: 0.316s;
+            -o-animation-delay: 0.316s;
+            -ms-animation-delay: 0.316s;
+            -webkit-animation-delay: 0.316s;
+            -moz-animation-delay: 0.316s;
+        }
+
+        #frotateG_03 {
+            left: 21px;
+            top: 0;
+            animation-delay: 0.3925s;
+            -o-animation-delay: 0.3925s;
+            -ms-animation-delay: 0.3925s;
+            -webkit-animation-delay: 0.3925s;
+            -moz-animation-delay: 0.3925s;
+        }
+
+        #frotateG_04 {
+            right: 6px;
+            top: 6px;
+            animation-delay: 0.469s;
+            -o-animation-delay: 0.469s;
+            -ms-animation-delay: 0.469s;
+            -webkit-animation-delay: 0.469s;
+            -moz-animation-delay: 0.469s;
+        }
+
+        #frotateG_05 {
+            right: 0;
+            top: 21px;
+            animation-delay: 0.5455s;
+            -o-animation-delay: 0.5455s;
+            -ms-animation-delay: 0.5455s;
+            -webkit-animation-delay: 0.5455s;
+            -moz-animation-delay: 0.5455s;
+        }
+
+        #frotateG_06 {
+            right: 6px;
+            bottom: 6px;
+            animation-delay: 0.622s;
+            -o-animation-delay: 0.622s;
+            -ms-animation-delay: 0.622s;
+            -webkit-animation-delay: 0.622s;
+            -moz-animation-delay: 0.622s;
+        }
+
+        #frotateG_07 {
+            left: 21px;
+            bottom: 0;
+            animation-delay: 0.6985s;
+            -o-animation-delay: 0.6985s;
+            -ms-animation-delay: 0.6985s;
+            -webkit-animation-delay: 0.6985s;
+            -moz-animation-delay: 0.6985s;
+        }
+
+        #frotateG_08 {
+            left: 6px;
+            bottom: 6px;
+            animation-delay: 0.775s;
+            -o-animation-delay: 0.775s;
+            -ms-animation-delay: 0.775s;
+            -webkit-animation-delay: 0.775s;
+            -moz-animation-delay: 0.775s;
+        }
+
+        &lt;a href='https://github.com/keyframes' class='user-mention'&gt;@keyframes&lt;/a&gt; f_fadeG {
+            0%;
+
+        {
+            background-color: rgb(0, 0, 0);
+        }
+
+        100% {
+            background-color: rgb(255, 255, 255);
+        }
+
+        }
+
+        @-o-keyframes f_fadeG {
+            0% {
+                background-color: rgb(0, 0, 0);
+            }
+
+            100% {
+                background-color: rgb(255, 255, 255);
+            }
+        }
+
+        @-ms-keyframes f_fadeG {
+            0% {
+                background-color: rgb(0, 0, 0);
+            }
+
+            100% {
+                background-color: rgb(255, 255, 255);
+            }
+        }
+
+        @-webkit-keyframes f_fadeG {
+            0% {
+                background-color: rgb(0, 0, 0);
+            }
+
+            100% {
+                background-color: rgb(255, 255, 255);
+            }
+        }
+
+        @-moz-keyframes f_fadeG {
+            0% {
+                background-color: rgb(0, 0, 0);
+            }
+
+            100% {
+                background-color: rgb(255, 255, 255);
+            }
+        }
+    </style>
+
+    <!-- Spinner Style -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body ng-app="myApp">
-    Start :  {{ startDate }}
-    <p>
-        HEllo There
-        {{StartTest}}
-    </p>
 
 
-    <div class="row" id="DateTime" ng-controller="myCtrl">
+    <div class="row " id="DateTime" ng-controller="myCtrl">
         <div class="col-md-offset-2 col-md-4">
-            <h6>From</h6>
-            <div class="form-group">
-                <div class="input-group date" id="datetimepicker15">
-                    <input type="text" class="form-control" datepicker="" ng-model="startDate" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon-calendar glyphicon">
-                        </span>
-                    </span>
+
+
+
+
+            <div class="row" id="DateTimeRow" style=" background-color:slategray">
+
+                <!--<p>
+                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        Link with href
+                    </a>
+                </p>
+
+
+                <div class="collapse" id="collapseExample">
+                    <div class="well">
+                        ...
+                    </div>
+                </div>-->
+
+                <div id="Test">
+                    <p>
+                        Start : {{ startDate }}
+                    </p>
+
+                    <p>
+                        End : {{ endDate }}
+                    </p>
+
                 </div>
-            </div>
 
 
-            <div class="row" id="DateTime">
                 <div class="col-md-offset-2 col-md-4">
                     <h6>From</h6>
                     <div class="form-group">
                         <div class="input-group date" id="datetimepicker1">
-                            <input type="text" class="form-control" />
+                            <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" />
                             <span class="input-group-addon">
                                 <span class="glyphicon-calendar glyphicon">
                                 </span>
@@ -67,7 +269,7 @@
                     <h6>To</h6>
                     <div class="form-group">
                         <div class="input-group date" id="datetimepicker2">
-                            <input type="text" class="form-control" />
+                            <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" />
                             <span class="input-group-addon">
                                 <span class="glyphicon-calendar glyphicon">
                                 </span>
@@ -75,20 +277,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success">Update</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="row">
-
-
-                <p ng-show="true">I am visible.</p>
-
-                <p ng-show="false">I am not visible.</p>
-
-            <p>Positive : {{Positive}}</p>
-            <p>Negative : {{Negative}}</p>
-            <p>Neutral : {{Neutral}}</p>
-
-                <!--<div ng-hide="true" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; z-index: 1; background-color: #fefefe;">
+            <div class="row" id="SpinnerRow">
+                <div id="spinner" ng-show="{{loading}}" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; z-index: 1; background-color: #fefefe;">
                     <div id="floatingCirclesG">
                         <div id="frotateG_01" class="f_circleG"></div>
                         <div id="frotateG_02" class="f_circleG"></div>
@@ -100,190 +298,25 @@
                         <div id="frotateG_08" class="f_circleG"></div>
                     </div>
 
-                    <style>
-                                    #floatingCirclesG {
-                                        position: absolute;
-                                        top: 0;
-                                        bottom: 0;
-                                        left: 0;
-                                        right: 0;
-                                        width: 51px;
-                                        height: 51px;
-                                        margin: auto;
-                                        transform: scale(0.6);
-                                        -o-transform: scale(0.6);
-                                        -ms-transform: scale(0.6);
-                                        -webkit-transform: scale(0.6);
-                                        -moz-transform: scale(0.6);
-                                    }
 
-                                    .f_circleG {
-                                        position: absolute;
-                                        background-color: rgb(255, 255, 255);
-                                        height: 9px;
-                                        width: 9px;
-                                        border-radius: 5px;
-                                        -o-border-radius: 5px;
-                                        -ms-border-radius: 5px;
-                                        -webkit-border-radius: 5px;
-                                        -moz-border-radius: 5px;
-                                        animation-name: f_fadeG;
-                                        -o-animation-name: f_fadeG;
-                                        -ms-animation-name: f_fadeG;
-                                        -webkit-animation-name: f_fadeG;
-                                        -moz-animation-name: f_fadeG;
-                                        animation-duration: 0.622s;
-                                        -o-animation-duration: 0.622s;
-                                        -ms-animation-duration: 0.622s;
-                                        -webkit-animation-duration: 0.622s;
-                                        -moz-animation-duration: 0.622s;
-                                        animation-iteration-count: infinite;
-                                        -o-animation-iteration-count: infinite;
-                                        -ms-animation-iteration-count: infinite;
-                                        -webkit-animation-iteration-count: infinite;
-                                        -moz-animation-iteration-count: infinite;
-                                        animation-direction: normal;
-                                        -o-animation-direction: normal;
-                                        -ms-animation-direction: normal;
-                                        -webkit-animation-direction: normal;
-                                        -moz-animation-direction: normal;
-                                    }
+                </div>
 
-                                    #frotateG_01 {
-                                        left: 0;
-                                        top: 21px;
-                                        animation-delay: 0.2295s;
-                                        -o-animation-delay: 0.2295s;
-                                        -ms-animation-delay: 0.2295s;
-                                        -webkit-animation-delay: 0.2295s;
-                                        -moz-animation-delay: 0.2295s;
-                                    }
+            </div>
 
-                                    #frotateG_02 {
-                                        left: 6px;
-                                        top: 6px;
-                                        animation-delay: 0.316s;
-                                        -o-animation-delay: 0.316s;
-                                        -ms-animation-delay: 0.316s;
-                                        -webkit-animation-delay: 0.316s;
-                                        -moz-animation-delay: 0.316s;
-                                    }
+            <div class="row" id="ChartRowDone">
 
-                                    #frotateG_03 {
-                                        left: 21px;
-                                        top: 0;
-                                        animation-delay: 0.3925s;
-                                        -o-animation-delay: 0.3925s;
-                                        -ms-animation-delay: 0.3925s;
-                                        -webkit-animation-delay: 0.3925s;
-                                        -moz-animation-delay: 0.3925s;
-                                    }
+                <div class="col-md-12 text-center; margin:auto">
 
-                                    #frotateG_04 {
-                                        right: 6px;
-                                        top: 6px;
-                                        animation-delay: 0.469s;
-                                        -o-animation-delay: 0.469s;
-                                        -ms-animation-delay: 0.469s;
-                                        -webkit-animation-delay: 0.469s;
-                                        -moz-animation-delay: 0.469s;
-                                    }
+                    <p>Positive : {{Positive}}</p>
+                    <p>Negative : {{Negative}}</p>
+                    <p>Neutral : {{Neutral}}</p>
 
-                                    #frotateG_05 {
-                                        right: 0;
-                                        top: 21px;
-                                        animation-delay: 0.5455s;
-                                        -o-animation-delay: 0.5455s;
-                                        -ms-animation-delay: 0.5455s;
-                                        -webkit-animation-delay: 0.5455s;
-                                        -moz-animation-delay: 0.5455s;
-                                    }
+                    <div id="googleChart" google-chart chart="chart" style="border: 1px inset black; padding: 0; width: 100%; margin: auto">
+                    </div>
+                </div>
+            </div>
 
-                                    #frotateG_06 {
-                                        right: 6px;
-                                        bottom: 6px;
-                                        animation-delay: 0.622s;
-                                        -o-animation-delay: 0.622s;
-                                        -ms-animation-delay: 0.622s;
-                                        -webkit-animation-delay: 0.622s;
-                                        -moz-animation-delay: 0.622s;
-                                    }
-
-                                    #frotateG_07 {
-                                        left: 21px;
-                                        bottom: 0;
-                                        animation-delay: 0.6985s;
-                                        -o-animation-delay: 0.6985s;
-                                        -ms-animation-delay: 0.6985s;
-                                        -webkit-animation-delay: 0.6985s;
-                                        -moz-animation-delay: 0.6985s;
-                                    }
-
-                                    #frotateG_08 {
-                                        left: 6px;
-                                        bottom: 6px;
-                                        animation-delay: 0.775s;
-                                        -o-animation-delay: 0.775s;
-                                        -ms-animation-delay: 0.775s;
-                                        -webkit-animation-delay: 0.775s;
-                                        -moz-animation-delay: 0.775s;
-                                    }
-
-                                    &lt;a href='https://github.com/keyframes' class='user-mention'&gt;@keyframes&lt;/a&gt; f_fadeG {
-                                        0%;
-
-                                    {
-                                        background-color: rgb(0, 0, 0);
-                                    }
-
-                                    100% {
-                                        background-color: rgb(255, 255, 255);
-                                    }
-
-                                    }
-
-                                    @-o-keyframes f_fadeG {
-                                        0% {
-                                            background-color: rgb(0, 0, 0);
-                                        }
-
-                                        100% {
-                                            background-color: rgb(255, 255, 255);
-                                        }
-                                    }
-
-                                    @-ms-keyframes f_fadeG {
-                                        0% {
-                                            background-color: rgb(0, 0, 0);
-                                        }
-
-                                        100% {
-                                            background-color: rgb(255, 255, 255);
-                                        }
-                                    }
-
-                                    @-webkit-keyframes f_fadeG {
-                                        0% {
-                                            background-color: rgb(0, 0, 0);
-                                        }
-
-                                        100% {
-                                            background-color: rgb(255, 255, 255);
-                                        }
-                                    }
-
-                                    @-moz-keyframes f_fadeG {
-                                        0% {
-                                            background-color: rgb(0, 0, 0);
-                                        }
-
-                                        100% {
-                                            background-color: rgb(255, 255, 255);
-                                        }
-                                    }
-                                </style>
-                </div>-->
-
+            <div class="row" id="ContentRow">
 
 
                 <div class="col-md-12" style="padding-top: 25px">
@@ -327,95 +360,72 @@
                     <p> Loading: {{loading}}</p>
                 </div>
             </div>
+
+
+
         </div>
 
 
 
-        <div class="row">
-            <div class="col-md-12 text-center; margin:auto">
-                <div id="googleChart" google-chart chart="chart" style="border: 1px inset black; padding: 0; width: 100%; margin: auto">
-                </div>
-                <div>
-                    <h2>Chart data as JSON:</h2>
-                    <pre style='clear: both; background-color: lightgray;'>{{chart|json}}</pre>
-                </div>
-            </div>
-        </div>
+
         <div id="ToDo" class="row">
-            <p>
-                TO DO:
+            <div id="Statics" class="row">
+                <h1>You selected:</h1>
                 <ul>
                     <li>
-                        LIST OF STOCKS Seesms like Different market have differnt stocks; check nasdaq.com
+                        <p>Symbol: {{selectedSymbol.Symbol}}</p>
                     </li>
                     <li>
-                        DATE
+                        <p>Name: {{selectedSymbol.Name}}</p>
                     </li>
                     <li>
-                        CHARTS
+                        <p>Last Sale: {{selectedSymbol.LastSale}}</p>
+                    </li>
+                    <li>
+                        <p>Market Cap: {{selectedSymbol.MarketCap}}</p>
+                    </li>
+                    <li>
+                        <p>IPOyear: {{selectedSymbol.IPOyear}}</p>
+                    </li>
+                    <li>
+                        <p>Sector: {{selectedSymbol.Sector}}</p>
+                    </li>
+                    <li>
+                        <p>industry: {{selectedSymbol.Industry}}</p>
+                    </li>
+                    <li>
+                        <p>Summary: {{selectedSymbol.Summary}}</p>
+                    </li>
+                    <li>
+                        <p>Quote: {{selectedSymbol.Quote}}</p>
                     </li>
                 </ul>
-            <p>The $http service requests a page on the server, and the response is set as the value of the "myWelcome" variable.</p>
 
-
-
-
+                <p>Name: {{selectedSymbol.name}}</p>
+                <table>
+                    <tr>
+                        <td>Date</td>
+                        <td>Open</td>
+                        <td>High</td>
+                        <td>x.Low</td>
+                        <td>x.Close</td>
+                        <td>x.Volume</td>
+                        <td>x.Adj_Close</td>
+                    </tr>
+                    <tr ng-repeat="x in quotes" align="center">
+                        <td>{{ x.Date}}</td>
+                        <td>{{ x.Open}}</td>
+                        <td>{{ x.High}}</td>
+                        <td>{{ x.Low}}</td>
+                        <td>{{ x.Close}}</td>
+                        <td>{{ x.Volume}}</td>
+                        <td>{{ x.Adj_Close}}</td>
+                    </tr>
+                </table>
+            </div>
 
         </div>
-        <div id="Statics" class="row">
-            <h1>You selected:</h1>
-            <ul>
-                <li>
-                    <p>Symbol: {{selectedSymbol.Symbol}}</p>
-                </li>
-                <li>
-                    <p>Name: {{selectedSymbol.Name}}</p>
-                </li>
-                <li>
-                    <p>Last Sale: {{selectedSymbol.LastSale}}</p>
-                </li>
-                <li>
-                    <p>Market Cap: {{selectedSymbol.MarketCap}}</p>
-                </li>
-                <li>
-                    <p>IPOyear: {{selectedSymbol.IPOyear}}</p>
-                </li>
-                <li>
-                    <p>Sector: {{selectedSymbol.Sector}}</p>
-                </li>
-                <li>
-                    <p>industry: {{selectedSymbol.Industry}}</p>
-                </li>
-                <li>
-                    <p>Summary: {{selectedSymbol.Summary}}</p>
-                </li>
-                <li>
-                    <p>Quote: {{selectedSymbol.Quote}}</p>
-                </li>
-            </ul>
 
-            <p>Name: {{selectedSymbol.name}}</p>
-            <table>
-                <tr>
-                    <td>Date</td>
-                    <td>Open</td>
-                    <td>High</td>
-                    <td>x.Low</td>
-                    <td>x.Close</td>
-                    <td>x.Volume</td>
-                    <td>x.Adj_Close</td>
-                </tr>
-                <tr ng-repeat="x in quotes" align="center">
-                    <td>{{ x.Date}}</td>
-                    <td>{{ x.Open}}</td>
-                    <td>{{ x.High}}</td>
-                    <td>{{ x.Low}}</td>
-                    <td>{{ x.Close}}</td>
-                    <td>{{ x.Volume}}</td>
-                    <td>{{ x.Adj_Close}}</td>
-                </tr>
-            </table>
-        </div>
     </div>
 </body>
 </html>
