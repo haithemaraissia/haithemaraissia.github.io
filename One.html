@@ -226,7 +226,7 @@
 
 
 
-            <div class="row" id="DateTimeRow" style=" background-color:slategray">
+            <div class="row" id="DateTimeRow" style=" background-color:slategray" ng-hide="live">
 
                 <p>
                     <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
@@ -238,21 +238,21 @@
                 <div class="collapse" id="collapseExample">
 
                     <!--<div id="TestDate ">
-                        <p>
-                            Start : {{ startDate }}
-                        </p>
+                <p>
+                    Start : {{ startDate }}
+                </p>
 
-                        <p>
-                            End : {{ endDate }}
-                        </p>
+                <p>
+                    End : {{ endDate }}
+                </p>
 
-                    </div>-->
+            </div>-->
 
                     <div class="col-md-offset-2 col-md-4">
                         <h6 style="color: white"><b>From</b></h6>
                         <div class="form-group">
                             <div class="input-group date" id="datetimepicker1">
-                                <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" />
+                                <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" ng-required="true" data-date-format='yy-mm-dd' />
                                 <span class="input-group-addon">
                                     <span class="glyphicon-calendar glyphicon">
                                     </span>
@@ -264,7 +264,7 @@
                         <h6 style="color: white"><b>To</b></h6>
                         <div class="form-group">
                             <div class="input-group date" id="datetimepicker2">
-                                <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" />
+                                <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" ng-required="true" data-date-format='yy-mm-dd' />
                                 <span class="input-group-addon">
                                     <span class="glyphicon-calendar glyphicon">
                                     </span>
@@ -275,7 +275,7 @@
 
                     <div class="col-md-offset-2 col-md-8">
                         <div class="form-group">
-                            <button type="button" class="btn btn-info" ng-click="updateTimeConstraint()">Update</button>
+                            <button type="button" class="btn btn-info" id="TimeConstraintButton" ng-click="updateTimeConstraint()" ng-disabled="valideDate">Update</button>
                         </div>
                     </div>
 

@@ -902,6 +902,7 @@ var app = angular.module('myApp', ['googlechart']);
 app.controller('myCtrl', function ($scope, $http, $window) {
 
     $scope.loading = true;
+    $scope.valideDate = true;
 
     $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20csv%20where%20url%3D'www.nasdaq.com%2Fscreening%2Fcompanies-by-name.aspx%3Fletter%3DA%26render%3Ddownload'%20and%20columns%3D'Symbol%2CName%2CLastSale%2CMarketCap%2CIPOyear%2CSector%2CIndustry%2CSummary%2CQuote'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys")
         .then(function (response) {
@@ -976,22 +977,35 @@ app.controller('myCtrl', function ($scope, $http, $window) {
         });
 
 
-    function constructApi(stock) {
-        var apiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-        $scope.APICall = apiCall;
+    function constructApi(stock, startdate, enddate) {
+        if (startdate == null) {
+            startdate = "2009-04-01";
+        }
+        if (enddate == null) {
+            enddate = "2010-03-10";
+        }
+        var apiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22"
+                        + stock + "%22%20and%20startDate%20%3D%20%22"
+                        + startdate
+                        + "%22%20and%20endDate%20%3D%20%22"
+                        + enddate
+                        + "%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+
+
+         $scope.APICall = apiCall;
         return apiCall;
     }
 
 
-    function calculate() {
+    function calculate(startdate, enddate) {
 
-
-        $("#spinner").show();
-
+       $("#spinner").show();
         $scope.Symbol = $scope.selectedSymbol.Symbol;
-
-
-        $http.get(constructApi($scope.selectedSymbol.Symbol))
+        var apiQuery = constructApi($scope.selectedSymbol.Symbol);
+        if(startdate != null && enddate != null) {
+            apiQuery = constructApi($scope.selectedSymbol.Symbol, startdate, enddate);
+        }
+        $http.get(apiQuery)
             .then(function (apiResponse) {
                 var response;
                 if (apiResponse == null) {
@@ -1008,32 +1022,20 @@ app.controller('myCtrl', function ($scope, $http, $window) {
 
 
 
-
-
-
-
                 $window.chart.dataProvider = [];
 
-
-                //Selected Index for the Pattern
                 var selectedPatternId = 1;
 
                 if ($scope.selectedPattern != null && $scope.selectedPattern.id != null) {
                     selectedPatternId = $scope.selectedPattern.id;
                 }
 
-                alert("SELECT PATTERN ID");
-                alert(selectedPatternId);
-
                 var positiveCount = 0;
                 var negativeCount = 0;
                 var neturalCount = 0;
 
-                //Every Low
                 var low = 0;
-                //Every High
                 var high = 0;
-                //Today
                 var dateCount = 0;
 
                 if (response.data.query.results != null) {
@@ -1049,8 +1051,74 @@ app.controller('myCtrl', function ($scope, $http, $window) {
 
                         if (selectedPatternId == 1) {
 
-                                //******************************Every Day******************************//
+                            //******************************Every Day******************************//
 
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                    >
+                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                positiveCount += 1;
+                            }
+
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                    ===
+                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                neturalCount += 1;
+                            }
+
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                    <
+                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                negativeCount += 1;
+                            }
+                        }
+
+
+                        //******************************Every Day******************************//
+
+
+                        if (selectedPatternId == 2) {
+
+
+                            //******************************Every 3 Day******************************///
+
+                            if (dateCount < 2) {
+                                dateCount++;
+                            } else {
+                                //Every Day
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
+                                        >
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                                    positiveCount += 1;
+                                }
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
+                                        ===
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                                    negativeCount += 1;
+                                }
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        <
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    neturalCount += 1;
+                                }
+                                //Every Day
+                                dateCount = 0;
+                            }
+                        }
+
+                        //******************************Every 3 Day******************************//
+
+
+                        //******************************Every Low******************************//
+
+                        if (selectedPatternId == 3) {
+
+                            if (low === 0) {
                                 if (
                                     parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
                                         >
@@ -1071,183 +1139,103 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                                         parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
                                     negativeCount += 1;
                                 }
+
+                                low = 1;
                             }
 
-                     //positiveCount = 10;
-                            //negativeCount = 10;
-                            //neturalCount = 10;
-
-
-                            //******************************Every Day******************************//
-
-
-       
- 
-
-
-                    if (selectedPatternId == 2) {
-
-
-                        ///******************************Every 3 Day******************************///
-
-                        if (dateCount < 2) {
-                            dateCount++;
-                        } else {
-                            //Every Day
-                            if (
-                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
-                                    >
-                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                                positiveCount += 1;
-                            }
-                            if (
-                                parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
-                                    ===
-                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                                negativeCount += 1;
-                            }
-                            if (
-                                parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                    <
-                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                neturalCount += 1;
-                            }
-                            //Every Day
-                            dateCount = 0;
-                        }
-                    }
-                 //positiveCount = 2;
-                            //negativeCount = 2;
-                            //neturalCount = 2;
-
-
-
-
-                    //******************************Every 3 Day******************************//
-
-
-
-
-           
-                        
-                        if (selectedPatternId == 3) {
-                            //positiveCount = 3;
-                            //negativeCount = 2;
-                            //neturalCount = 2;
-
-                            //******************************Every Low******************************//
-
-                                if (low === 0) {
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            <
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        low = 1;
-                                    }
+                            if (low === 1) {
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        >
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    positiveCount += 1;
                                 }
 
-                                if (low === 1) {
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            >
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        positiveCount += 1;
-                                    }
-
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            ===
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        neturalCount += 1;
-                                    }
-
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            <
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        negativeCount += 1;
-                                    }
-
-                                    low = 0;
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        ===
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    neturalCount += 1;
                                 }
-                       
-                          
 
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        <
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    negativeCount += 1;
+                                }
 
+                                low = 0;
+                            }
                         }
 
-
-  //******************************Every Low******************************//
+                        //******************************Every Low******************************//
 
 
 
                         if (selectedPatternId == 4) {
-                            //positiveCount = 4;
-                            //negativeCount = 2;
-                            //neturalCount = 4;
 
                             //******************************Every High******************************//
-               
-                                if (high === 0) {
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            >
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        high = 1;
-                                    }
+
+                            if (high === 0) {
+                                if (
+                                     parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                      >
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    positiveCount += 1;
                                 }
 
-                                if (high === 1) {
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            >
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        positiveCount += 1;
-                                    }
-
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            ===
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        neturalCount += 1;
-                                    }
-
-                                    if (
-                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                            <
-                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                                        negativeCount += 1;
-                                    }
-
-                                    high = 0;
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        ===
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    neturalCount += 1;
                                 }
-                         
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        <
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    negativeCount += 1;
+                                }
+
+                                high = 1;
+                            }
+
+                            if (high === 1) {
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        >
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    positiveCount += 1;
+                                }
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        ===
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    neturalCount += 1;
+                                }
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        <
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    negativeCount += 1;
+                                }
+
+                                high = 0;
+                            }
+
                         }
-
-
-                        //******************************Every High******************************//
-
-
-
-
-
-
-
-
-
                     }
+                    //******************************Every High******************************//
+
+
+
                 }//End of response.data.query.results != null
 
-
                 $window.chart.validateData();
-
-
-                alert("positiveCount");
-                alert(positiveCount);
-                alert("negativeCount");
-                alert(negativeCount);
-                alert("neutralCount");
-                alert(neturalCount);
 
                 $scope.Positive = positiveCount;
                 $scope.Negative = negativeCount;
@@ -1264,35 +1252,13 @@ app.controller('myCtrl', function ($scope, $http, $window) {
     }
 
 
-
     $scope.onSymbolChanged = function () {
-        //  alert("OnSymbolChanged");
         calculate();
     };
 
     $scope.onPatternChanged = function () {
-        //$scope.Pattern = $scope.selectedPattern.id;
-        //alert($scope.Pattern);
-
-        //alert("onPatternChanged");
-
-
-        //$window.chart.dataProvider = [];
-
-        //$scope.Positive = 60;
-        //$scope.Negative = 40;
-        //$scope.Neutral = 20;
-
-
-        //$scope.chart.data[1][1] = $scope.Positive;
-        //$scope.chart.data[2][1] = $scope.Negative;
-        //$scope.chart.data[3][1] = $scope.Neutral;
-
-
         calculate();
-
     };
-
 
     $scope.GrabData = function () {
         $http.get(constructApi($scope.Symbol))
@@ -1301,15 +1267,27 @@ app.controller('myCtrl', function ($scope, $http, $window) {
           });
     };
 
+    //function validateDates() {
+    //    if (!$scope.model) return;
+    //    if ($scope.form.startDate.$error.invalidDate || $scope.form.endDate.$error.invalidDate) {
+    //        $scope.form.startDate.$setValidity("endBeforeStart", true);  //already invalid (per validDate directive)
+    //    } else {
+    //        //depending on whether the user used the date picker or typed it, this will be different (text or date type).  
+    //        //creating a new date object takes care of that.  
+    //        var endDate = new Date($scope.model.Template.EndDate);
+    //        var startDate = new Date($scope.model.Template.StartDate);
+    //        $scope.form.startDate.$setValidity("endBeforeStart", endDate >= startDate);
+    //    }
+    //}
+
+
+
+
+
 
     $scope.updateTimeConstraint = function () {
-        alert("Time From");
-        alert($scope.startDate);
-        alert("Time To");
-        alert($scope.endDate);
+        calculate($scope.startDate, $scope.endDate);
     }
-
-
 
 
 });
@@ -1325,9 +1303,9 @@ app.directive('datepicker', function () {
 
             $(el).datepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY',
+                dateFormat: 'yy-mm-dd',
                 onSelect: function (dateText) {
-
+                    $('#TimeConstraintButton').prop('disabled', true);
                     var fieldName = el.attr('name');
                     if (fieldName === 'Start') {
                         scope.startDate = dateText;
@@ -1335,6 +1313,33 @@ app.directive('datepicker', function () {
                     if (fieldName === 'End') {
                         scope.endDate = dateText;
                     }
+
+
+
+                    if (scope.startDate == null) {
+                        scope.valideDate = true;
+ 
+                        alert("start date is null");
+
+                    }
+
+                    if (scope.endDate == null) {
+                        scope.valideDate = true;
+                        alert("end date is null");
+
+                    }
+
+
+                    if (scope.startDate != null & scope.endDate != null) {
+                        if (scope.startDate <= scope.endDate) {
+
+                            scope.valideDate = false;
+                            $('#TimeConstraintButton').prop('disabled', false);
+                        }
+                    }
+
+
+
 
                 }
             });
