@@ -229,60 +229,61 @@
             <div class="row" id="DateTimeRow" style=" background-color:slategray">
 
                 <p>
-                    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        Link with href
+                    <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        Time Constraint
                     </a>
                 </p>
 
 
                 <div class="collapse" id="collapseExample">
-                    <div class="well">
-                        ...
-                    </div>
-                </div>
 
-                <div id="Test">
-                    <p>
-                        Start : {{ startDate }}
-                    </p>
+                    <!--<div id="TestDate ">
+                        <p>
+                            Start : {{ startDate }}
+                        </p>
 
-                    <p>
-                        End : {{ endDate }}
-                    </p>
+                        <p>
+                            End : {{ endDate }}
+                        </p>
 
-                </div>
+                    </div>-->
 
-
-                <div class="col-md-offset-2 col-md-4">
-                    <h6>From</h6>
-                    <div class="form-group">
-                        <div class="input-group date" id="datetimepicker1">
-                            <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon-calendar glyphicon">
+                    <div class="col-md-offset-2 col-md-4">
+                        <h6 style="color: white"><b>From</b></h6>
+                        <div class="form-group">
+                            <div class="input-group date" id="datetimepicker1">
+                                <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon-calendar glyphicon">
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-offset-2 col-md-4">
-                    <h6>To</h6>
-                    <div class="form-group">
-                        <div class="input-group date" id="datetimepicker2">
-                            <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon-calendar glyphicon">
+                    <div class="col-md-offset-2 col-md-4">
+                        <h6 style="color: white"><b>To</b></h6>
+                        <div class="form-group">
+                            <div class="input-group date" id="datetimepicker2">
+                                <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon-calendar glyphicon">
+                                    </span>
                                 </span>
-                            </span>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="col-md-offset-2 col-md-8">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info" ng-click="updateTimeConstraint()">Update</button>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="col-md-offset-2 col-md-8">
-                    <div class="form-group">
-                        <button type="button" class="btn btn-success">Update</button>
-                    </div>
-                </div>
+
+
+
             </div>
 
             <div class="row" id="SpinnerRow">
@@ -346,7 +347,7 @@
 
                     <div id="Pattern" class="col-md-4 text-center">
                         <label> Trading Pattern </label>
-                        <select ng-model="selectedPattern" ng-options="x.id for x in patterns" ng-change="onPatternChanged()"></select>
+                        <select ng-model="selectedPattern" ng-options="x.name for x in patterns" ng-change="onPatternChanged()"></select>
                     </div>
 
                 </div>

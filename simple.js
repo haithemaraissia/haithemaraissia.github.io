@@ -2,8 +2,6 @@
 /// <reference path="ThirdParty/serial.js" />
 /// <reference path="~/Scripts/angular-scenario.js" />
 /// <reference path="~/Scripts/angular-mocks.js" />
-// Code goes here
-
 
 var chart = AmCharts.makeChart("chartdiv", {
     "type": "serial",
@@ -907,69 +905,76 @@ app.controller('myCtrl', function ($scope, $http, $window) {
 
     $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20csv%20where%20url%3D'www.nasdaq.com%2Fscreening%2Fcompanies-by-name.aspx%3Fletter%3DA%26render%3Ddownload'%20and%20columns%3D'Symbol%2CName%2CLastSale%2CMarketCap%2CIPOyear%2CSector%2CIndustry%2CSummary%2CQuote'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys")
         .then(function (response) {
-          if (response.data.query.results != null) {
-              $scope.cache = true;
-              $scope.live = false;
-              $scope.Symbols = response.data.query.results.row;
-          }
-          else {
-              $http.get("Data/Cached/Symbol/AllSymbols.json")
-                .then(function (response) {
-                    $scope.cache = false;
-                    $scope.live = true;
-                    $scope.Symbols = response.data.query.results.row;
-                });
-          }
+            if (response.data.query.results != null) {
+                $scope.cache = true;
+                $scope.live = false;
+                $scope.Symbols = response.data.query.results.row;
+            }
+            else {
+                $http.get("Data/Cached/Symbol/AllSymbols.json")
+                  .then(function (response) {
+                      $scope.cache = false;
+                      $scope.live = true;
+                      $scope.Symbols = response.data.query.results.row;
+                  });
+            }
 
 
-          $scope.patterns = [
-              { id: "1", name: "Every Day" },
-              { id: "2", name: "Every 3 Days" },
-              { id: "3", name: "Every 1 Low" },
-              { id: "4", name: "Every 1 high" }
-          ];
+            $scope.patterns = [
+                { id: "1", name: "Every Day" },
+                { id: "2", name: "Every 3 Days" },
+                { id: "3", name: "Every 1 Low" },
+                { id: "4", name: "Every 1 high" }
+            ];
 
+            if ($scope.Symbols[0] != null) {
+                $scope.selectedSymbol = $scope.Symbols[0];
+            } else {
+                $scope.selectedSymbol = "PIH";
+            }
+            $scope.selectedPattern = $scope.patterns[0];
 
-          $scope.Positive = 30;
-          $scope.Negative = 30;
-          $scope.Neutral = 30;
+            $scope.Positive = 30;
+            $scope.Negative = 30;
+            $scope.Neutral = 30;
 
-          var chart1 = {};
-          chart1.type = "PieChart";
-          chart1.cssStyle = "margin:auto";
-          chart1.data = [
-            ['Gain', 'Percentage'],
-            ['Positive', $scope.Positive],
-            ['Negative', $scope.Negative],
-            ['Neutral', $scope.Neutral]
-          ];
-          chart1.options = {
-              title: "Statistics",
-              displayExactValues: true,
-              width: 400,
-              height: 200,
-              is3D: true,
-              chartArea: {
-                  left: 10,
-                  top: 10,
-                  bottom: 0,
-                  height: "100%"
-              }
-          };
+            var chart1 = {};
+            chart1.type = "PieChart";
+            chart1.cssStyle = "margin:auto";
+            chart1.data = [
+              ['Gain', 'Percentage'],
+              ['Positive', $scope.Positive],
+              ['Negative', $scope.Negative],
+              ['Neutral', $scope.Neutral]
+            ];
+            chart1.options = {
+                title: "Statistics",
+                displayExactValues: true,
+                width: 400,
+                height: 200,
+                is3D: true,
+                chartArea: {
+                    left: 10,
+                    top: 10,
+                    bottom: 0,
+                    height: "100%"
+                }
+            };
 
-          chart1.formatters = {
-              number: [{
-                  columnNum: 1,
-                  pattern: " #,##0.00"
-              }]
-          };
+            chart1.formatters = {
+                number: [{
+                    columnNum: 1,
+                    pattern: " #,##0.00"
+                }]
+            };
 
-          $scope.chart = chart1;
-         
-      })
+            $scope.chart = chart1;
+
+        })
         .finally(function () {
             $("#spinner").hide();
-      });
+        });
+
 
     function constructApi(stock) {
         var apiCall = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" + stock + "%22%20and%20startDate%20%3D%20%222009-04-01%22%20and%20endDate%20%3D%20%222010-03-10%22%20%7C%20sort%20(%20field%3D%22Date%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
@@ -977,16 +982,22 @@ app.controller('myCtrl', function ($scope, $http, $window) {
         return apiCall;
     }
 
-    $scope.onSymbolChanged = function () {
+
+    function calculate() {
+
+
         $("#spinner").show();
+
         $scope.Symbol = $scope.selectedSymbol.Symbol;
+
+
         $http.get(constructApi($scope.selectedSymbol.Symbol))
-            .then(function(apiResponse) {
+            .then(function (apiResponse) {
                 var response;
                 if (apiResponse == null) {
                     $http
                         .get("Data/Cached/Symbol/Sample/Y.json")
-                        .then(function(cacheResponse) {
+                        .then(function (cacheResponse) {
                             response = cacheResponse;
                             $scope.dataStatus = "DATA FROM SAMPLE";
                         });
@@ -996,17 +1007,27 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                 }
 
 
+
+
+
+
+
                 $window.chart.dataProvider = [];
+
+
+                //Selected Index for the Pattern
+                var selectedPatternId = 1;
+
+                if ($scope.selectedPattern != null && $scope.selectedPattern.id != null) {
+                    selectedPatternId = $scope.selectedPattern.id;
+                }
+
+                alert("SELECT PATTERN ID");
+                alert(selectedPatternId);
+
                 var positiveCount = 0;
                 var negativeCount = 0;
                 var neturalCount = 0;
-
-
-
-
-
-
-
 
                 //Every Low
                 var low = 0;
@@ -1026,143 +1047,207 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                             "close": parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
                         });
 
+                        if (selectedPatternId == 1) {
 
-                        //******************************Every Day******************************//
-                        if (
-                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                >
-                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                            positiveCount += 1;
+                                //******************************Every Day******************************//
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        >
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    positiveCount += 1;
+                                }
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        ===
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    neturalCount += 1;
+                                }
+
+                                if (
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                        <
+                                        parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                    negativeCount += 1;
+                                }
+                            }
+
+                     //positiveCount = 10;
+                            //negativeCount = 10;
+                            //neturalCount = 10;
+
+
+                            //******************************Every Day******************************//
+
+
+       
+ 
+
+
+                    if (selectedPatternId == 2) {
+
+
+                        ///******************************Every 3 Day******************************///
+
+                        if (dateCount < 2) {
+                            dateCount++;
+                        } else {
+                            //Every Day
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
+                                    >
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                                positiveCount += 1;
+                            }
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
+                                    ===
+                                    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
+                                negativeCount += 1;
+                            }
+                            if (
+                                parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                    <
+                                    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                neturalCount += 1;
+                            }
+                            //Every Day
+                            dateCount = 0;
+                        }
+                    }
+                 //positiveCount = 2;
+                            //negativeCount = 2;
+                            //neturalCount = 2;
+
+
+
+
+                    //******************************Every 3 Day******************************//
+
+
+
+
+           
+                        
+                        if (selectedPatternId == 3) {
+                            //positiveCount = 3;
+                            //negativeCount = 2;
+                            //neturalCount = 2;
+
+                            //******************************Every Low******************************//
+
+                                if (low === 0) {
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            <
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        low = 1;
+                                    }
+                                }
+
+                                if (low === 1) {
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            >
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        positiveCount += 1;
+                                    }
+
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            ===
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        neturalCount += 1;
+                                    }
+
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            <
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        negativeCount += 1;
+                                    }
+
+                                    low = 0;
+                                }
+                       
+                          
+
+
                         }
 
-                        if (
-                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                ===
-                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                            neturalCount += 1;
+
+  //******************************Every Low******************************//
+
+
+
+                        if (selectedPatternId == 4) {
+                            //positiveCount = 4;
+                            //negativeCount = 2;
+                            //neturalCount = 4;
+
+                            //******************************Every High******************************//
+               
+                                if (high === 0) {
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            >
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        high = 1;
+                                    }
+                                }
+
+                                if (high === 1) {
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            >
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        positiveCount += 1;
+                                    }
+
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            ===
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        neturalCount += 1;
+                                    }
+
+                                    if (
+                                        parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
+                                            <
+                                            parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
+                                        negativeCount += 1;
+                                    }
+
+                                    high = 0;
+                                }
+                         
                         }
 
-                        if (
-                            parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                                <
-                                parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                            negativeCount += 1;
-                        }
-                        //******************************Every Day******************************//
+
+                        //******************************Every High******************************//
 
 
 
 
-////Every Low
-                        //if (Low === 0) {
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    <
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        Low = 1;
-                        //    }
-                        //}
-
-                        //if (low == 1) {
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    >
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        positiveCount += 1;
-                        //    }
-
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    ==
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        neturalCount += 1;
-                        //    }
-
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    <
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        negativeCount += 1;
-                        //    }
-
-                        //    Low = 0;
-                        //}
-                        ////Every Low
-
-                        ////Every High
-                        //if (High == 0) {
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    >
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        High = 1;
-                        //    }
-                        //}
-
-                        //if (High == 1) {
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    >
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        positiveCount += 1;
-                        //    }
-
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    ==
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        neturalCount += 1;
-                        //    }
-
-                        //    if (
-                        //    parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //    <
-                        //    parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        negativeCount += 1;
-                        //    }
-
-                        //    High = 0;
-                        //}
-                        ////Every High
 
 
-////Every 3 Day
-                        //if (dateCount < 2) {
-                        //    dateCount++;
-                        //}
-                        //else {
-                        //    //Every Day
-                        //    if (
-                        //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)
-                        //      >
-                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                        //        positiveCount += 1;
-                        //    }
 
-                        //    if (
-                        //      parseFloat(response.data.query.results.quote[i].Low).toFixed(2)
-                        //      ==
-                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)) {
-                        //        negativeCount += 1;
-                        //    }
 
-                        //    if (
-                        //      parseFloat(response.data.query.results.quote[i].Close).toFixed(2)
-                        //      <
-                        //      parseFloat(response.data.query.results.quote[i].Open).toFixed(2)) {
-                        //        neturalCount += 1;
-                        //    }
-                        //    //Every Day
-                        //    dateCount = 0;
-                        //}
-
-                        ////Every 3 Day
 
                     }
+                }//End of response.data.query.results != null
 
-                }
 
                 $window.chart.validateData();
+
+
+                alert("positiveCount");
+                alert(positiveCount);
+                alert("negativeCount");
+                alert(negativeCount);
+                alert("neutralCount");
+                alert(neturalCount);
 
                 $scope.Positive = positiveCount;
                 $scope.Negative = negativeCount;
@@ -1172,14 +1257,39 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                 $scope.chart.data[2][1] = negativeCount;
                 $scope.chart.data[3][1] = neturalCount;
             })
-            .finally(function () {
-            $("#spinner").hide();
-        });
+                .finally(function () {
+                    $("#spinner").hide();
+                });
 
+    }
+
+
+
+    $scope.onSymbolChanged = function () {
+        //  alert("OnSymbolChanged");
+        calculate();
     };
 
     $scope.onPatternChanged = function () {
-        //  $scope.Symbol = $scope.selectedSymbol.Symbol;
+        //$scope.Pattern = $scope.selectedPattern.id;
+        //alert($scope.Pattern);
+
+        //alert("onPatternChanged");
+
+
+        //$window.chart.dataProvider = [];
+
+        //$scope.Positive = 60;
+        //$scope.Negative = 40;
+        //$scope.Neutral = 20;
+
+
+        //$scope.chart.data[1][1] = $scope.Positive;
+        //$scope.chart.data[2][1] = $scope.Negative;
+        //$scope.chart.data[3][1] = $scope.Neutral;
+
+
+        calculate();
 
     };
 
@@ -1190,13 +1300,25 @@ app.controller('myCtrl', function ($scope, $http, $window) {
               $scope.quotes = response.data.query.results.quote;
           });
     };
+
+
+    $scope.updateTimeConstraint = function () {
+        alert("Time From");
+        alert($scope.startDate);
+        alert("Time To");
+        alert($scope.endDate);
+    }
+
+
+
+
 });
 
 
 
 app.directive('datepicker', function () {
     return {
-       // scope: true,
+        // scope: true,
 
         link: function (scope, el, attr) {
 
