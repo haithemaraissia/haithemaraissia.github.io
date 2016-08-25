@@ -221,212 +221,217 @@
 
 
     <div class="row " id="DateTime" ng-controller="myCtrl">
-        <div class="col-md-offset-2 col-md-4">
+    <div class="col-md-offset-2 col-md-4">
 
-
-
-
-            <div class="row" id="DateTimeRow" style=" background-color:slategray" ng-hide="live">
-
-                <p>
-                    <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        Time Constraint
-                    </a>
-                </p>
-
-
-                <div class="collapse" id="collapseExample">
-
-                    <!--<div id="TestDate ">
-                <p>
-                    Start : {{ startDate }}
-                </p>
-
-                <p>
-                    End : {{ endDate }}
-                </p>
-
-            </div>-->
-
-                    <div class="col-md-offset-2 col-md-4">
-                        <h6 style="color: white"><b>From</b></h6>
-                        <div class="form-group">
-                            <div class="input-group date" id="datetimepicker1">
-                                <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" ng-required="true" data-date-format='yy-mm-dd' />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon-calendar glyphicon">
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-offset-2 col-md-4">
-                        <h6 style="color: white"><b>To</b></h6>
-                        <div class="form-group">
-                            <div class="input-group date" id="datetimepicker2">
-                                <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" ng-required="true" data-date-format='yy-mm-dd' />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon-calendar glyphicon">
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-offset-2 col-md-8">
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info" id="TimeConstraintButton" ng-click="updateTimeConstraint()" ng-disabled="valideDate">Update</button>
-                        </div>
-                    </div>
-
+        <div class="row" id="SpinnerRow">
+            <div id="spinner" ng-show="{{loading}}" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; z-index: 1; background-color: #fefefe;">
+                <div id="floatingCirclesG">
+                    <div id="frotateG_01" class="f_circleG"></div>
+                    <div id="frotateG_02" class="f_circleG"></div>
+                    <div id="frotateG_03" class="f_circleG"></div>
+                    <div id="frotateG_04" class="f_circleG"></div>
+                    <div id="frotateG_05" class="f_circleG"></div>
+                    <div id="frotateG_06" class="f_circleG"></div>
+                    <div id="frotateG_07" class="f_circleG"></div>
+                    <div id="frotateG_08" class="f_circleG"></div>
                 </div>
-
-
 
 
             </div>
 
-            <div class="row" id="SpinnerRow">
-                <div id="spinner" ng-show="{{loading}}" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.5; z-index: 1; background-color: #fefefe;">
-                    <div id="floatingCirclesG">
-                        <div id="frotateG_01" class="f_circleG"></div>
-                        <div id="frotateG_02" class="f_circleG"></div>
-                        <div id="frotateG_03" class="f_circleG"></div>
-                        <div id="frotateG_04" class="f_circleG"></div>
-                        <div id="frotateG_05" class="f_circleG"></div>
-                        <div id="frotateG_06" class="f_circleG"></div>
-                        <div id="frotateG_07" class="f_circleG"></div>
-                        <div id="frotateG_08" class="f_circleG"></div>
+        </div>
+
+        <div class="row" id="ContentRow">
+
+
+            <div class="col-md-12" style="padding-top: 25px">
+
+
+
+                <div class="col-md-16 text-center">
+                    <div id="LoadCache" ng-hide="cache">
+                        <label> Loading Data From Cache </label>
+                    </div>
+                    <div id="LoadLive" ng-hide="live">
+                        <label> Loading Live Data </label>
                     </div>
 
+                    <p>
+                        <br />
+                    </p>
+                </div>
 
+
+                <div id="Symbols" class="col-md-6 text-center">
+                    <label> Symbol </label>
+                    <select ng-model="selectedSymbol" ng-options="x.Symbol for x in Symbols" ng-change="onSymbolChanged()"></select>
+                </div>
+
+                <div id="Pattern" class="col-md-6 text-center">
+                    <label> Trading Pattern </label>
+                    <select ng-model="selectedPattern" ng-options="x.name for x in patterns" ng-change="onPatternChanged()"></select>
                 </div>
 
             </div>
 
-            <div class="row" id="ChartRowDone">
+            <div id="chart" class="col-md-12 ">
+                <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;"></div>
+            </div>
+        </div>
+
+        <div class="row" id="ChartRowDone">
+
+            <p>
+                <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseStatistics" aria-expanded="false" aria-controls="collapseStatistics">
+                    statistical analysis
+                </a>
+            </p>
+
+
+            <div class="collapse" id="collapseStatistics" style="background-color: slategray">
 
                 <div class="col-md-12 text-center; margin:auto">
 
-                    <p>Positive : {{Positive}}</p>
-                    <p>Negative : {{Negative}}</p>
-                    <p>Neutral : {{Neutral}}</p>
+                    <p>
+                        <b>Gain : </b>{{Positive}}
+                    </p>
+                    <p>
+                        <b>Loss : </b>{{Negative}}
+                    </p>
+                    <p>
+                        <b>Even : </b>{{Neutral}}
+                    </p>
 
-                    <div id="googleChart" google-chart chart="chart" style="border: 1px inset black; padding: 0; width: 100%; margin: auto">
+                    <div id="googleChart" google-chart chart="chart" style="padding: 0; width: 100%; margin: auto">
                     </div>
                 </div>
             </div>
 
-            <div class="row" id="ContentRow">
-
-
-                <div class="col-md-12" style="padding-top: 25px">
-
-
-
-                    <div class="col-md-16 text-center">
-                        <div id="LoadCache" ng-hide="cache">
-                            <label> Loading Data From Cache </label>
-                        </div>
-                        <div id="LoadLive" ng-hide="live">
-                            <label> Loading Live Data </label>
-                        </div>
-
-
-
-                        <p>
-                            <br />
-                        </p>
-                    </div>
-
-
-                    <div id="Symbols" class="col-md-8 text-center">
-                        <label> Symbol </label>
-                        <select ng-model="selectedSymbol" ng-options="x.Symbol for x in Symbols" ng-change="onSymbolChanged()"></select>
-                    </div>
-
-                    <div id="Pattern" class="col-md-4 text-center">
-                        <label> Trading Pattern </label>
-                        <select ng-model="selectedPattern" ng-options="x.name for x in patterns" ng-change="onPatternChanged()"></select>
-                    </div>
-
-                </div>
-
-                <div id="chart" class="col-md-12 ">
-                    <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;"></div>
-                </div>
-                <div id="test">
-                    <p> Test: {{APICall}} </p>
-                    <p> Status: {{dataStatus}} </p>
-                    <p> Loading: {{loading}}</p>
-                </div>
+            <div id="test">
+                <p> Test: {{APICall}} </p>
+                <p> Status: {{dataStatus}} </p>
+                <p> Loading: {{loading}}</p>
             </div>
-
-
-
+        </div>
+     
+        <div class="row" id="DateTimeRow" ng-hide="live">
+            <p>
+                <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Time Constraint
+                </a>
+            </p>
+            <div class="collapse" id="collapseExample" style="background-color: slategray">
+                <div class="col-md-offset-2 col-md-4">
+                    <h6 style="color: white"><b>From</b></h6>
+                    <div class="form-group">
+                        <div class="input-group date" id="datetimepicker1">
+                            <input type="text" class="form-control" name="Start" datepicker="" ng-model="startDate" ng-required="true" data-date-format='yy-mm-dd' />
+                            <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-2 col-md-4">
+                    <h6 style="color: white"><b>To</b></h6>
+                    <div class="form-group">
+                        <div class="input-group date" id="datetimepicker2">
+                            <input type="text" class="form-control" name="End" datepicker="" ng-model="endDate" ng-required="true" data-date-format='yy-mm-dd' />
+                            <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-info" id="TimeConstraintButton" ng-click="updateTimeConstraint()" ng-disabled="valideDate">Update</button>
+                    </div>
+                </div>
+                <div style="border: 1px inset black; padding: 0; width: 100%; margin: auto"></div>
+            </div>
         </div>
 
+    </div>
 
 
+        <div id="RawData" class="col-md-offset-1 col-md-4">
 
-        <div id="ToDo" class="row">
-            <div id="Statics" class="row">
-                <h1>You selected:</h1>
-                <ul>
-                    <li>
-                        <p>Symbol: {{selectedSymbol.Symbol}}</p>
-                    </li>
-                    <li>
-                        <p>Name: {{selectedSymbol.Name}}</p>
-                    </li>
-                    <li>
-                        <p>Last Sale: {{selectedSymbol.LastSale}}</p>
-                    </li>
-                    <li>
-                        <p>Market Cap: {{selectedSymbol.MarketCap}}</p>
-                    </li>
-                    <li>
-                        <p>IPOyear: {{selectedSymbol.IPOyear}}</p>
-                    </li>
-                    <li>
-                        <p>Sector: {{selectedSymbol.Sector}}</p>
-                    </li>
-                    <li>
-                        <p>industry: {{selectedSymbol.Industry}}</p>
-                    </li>
-                    <li>
-                        <p>Summary: {{selectedSymbol.Summary}}</p>
-                    </li>
-                    <li>
-                        <p>Quote: {{selectedSymbol.Quote}}</p>
-                    </li>
-                </ul>
-
-                <p>Name: {{selectedSymbol.name}}</p>
-                <table>
-                    <tr>
-                        <td>Date</td>
-                        <td>Open</td>
-                        <td>High</td>
-                        <td>x.Low</td>
-                        <td>x.Close</td>
-                        <td>x.Volume</td>
-                        <td>x.Adj_Close</td>
-                    </tr>
-                    <tr ng-repeat="x in quotes" align="center">
-                        <td>{{ x.Date}}</td>
-                        <td>{{ x.Open}}</td>
-                        <td>{{ x.High}}</td>
-                        <td>{{ x.Low}}</td>
-                        <td>{{ x.Close}}</td>
-                        <td>{{ x.Volume}}</td>
-                        <td>{{ x.Adj_Close}}</td>
-                    </tr>
-                </table>
+            <div id="StockSelectionHeader">
+                <p>
+                    <a class="btn btn-info" role="button" data-toggle="collapse" href="#RawStockSelection" aria-expanded="false" aria-controls="RawStockSelection">
+                        Stock Selection:
+                    </a>
+                </p>
             </div>
 
-        </div>
+            <div class="collapse" id="RawStockSelection" style="">
+                <div class="table-responsive">
 
+                    <ul>
+                        <li>
+                            <p><b>Symbol: </b>{{selectedSymbol.Symbol}}</p>
+                        </li>
+                        <li>
+                            <p><b>Name: </b>{{selectedSymbol.Name}}</p>
+                        </li>
+                        <li>
+                            <p><b>Last Sale: </b>{{selectedSymbol.LastSale}}</p>
+                        </li>
+                        <li>
+                            <p><b>Market Cap: </b>{{selectedSymbol.MarketCap}}</p>
+                        </li>
+                        <li>
+                            <p><b>IPOYear: </b>{{selectedSymbol.IPOyear}}</p>
+                        </li>
+                        <li>
+                            <p><b>Sector: </b>{{selectedSymbol.Sector}}</p>
+                        </li>
+                        <li>
+                            <p><b>Industry: </b>{{selectedSymbol.Industry}}</p>
+                        </li>
+                        <li>
+                            <p><b>Summary: </b>{{selectedSymbol.Summary}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="RawDataHeader">
+                <p>
+                    <a class="btn btn-info" role="button" data-toggle="collapse" href="#RawDatacollapse" aria-expanded="false" aria-controls="RawDatacollapse">
+                        Raw Data
+                    </a>
+                </p>
+            </div>
+
+            <div class="collapse" id="RawDatacollapse" style="background-color: slategray">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>Date</td>
+                            <td>Open</td>
+                            <td>High</td>
+                            <td>x.Low</td>
+                            <td>x.Close</td>
+                            <td>x.Volume</td>
+                            <td>x.Adj_Close</td>
+                        </tr>
+                        <tr ng-repeat="x in quotes" align="center">
+                            <td>{{ x.Date}}</td>
+                            <td>{{ x.Open}}</td>
+                            <td>{{ x.High}}</td>
+                            <td>{{ x.Low}}</td>
+                            <td>{{ x.Close}}</td>
+                            <td>{{ x.Volume}}</td>
+                            <td>{{ x.Adj_Close}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

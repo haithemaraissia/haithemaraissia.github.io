@@ -1247,17 +1247,33 @@ app.controller('myCtrl', function ($scope, $http, $window) {
             })
                 .finally(function () {
                     $("#spinner").hide();
+                    $('#collapseStatistics').collapse('show');
+                    $('#RawStockSelection').collapse('show');
+                    $('#RawDatacollapse').collapse('show');
+
                 });
 
     }
 
 
     $scope.onSymbolChanged = function () {
-        calculate();
+        if ($scope.startDate != null && $scope.endDate != null) {
+            alert($scope.startDate);
+            calculate($scope.startDate, $scope.endDate);
+        } else {
+            calculate();
+        }
+
     };
 
     $scope.onPatternChanged = function () {
-        calculate();
+        if ($scope.startDate != null && $scope.endDate != null) {
+            alert($scope.startDate);
+            calculate($scope.startDate, $scope.endDate);
+        } else {
+             calculate();
+        }
+       
     };
 
     $scope.GrabData = function () {
@@ -1266,22 +1282,6 @@ app.controller('myCtrl', function ($scope, $http, $window) {
               $scope.quotes = response.data.query.results.quote;
           });
     };
-
-    //function validateDates() {
-    //    if (!$scope.model) return;
-    //    if ($scope.form.startDate.$error.invalidDate || $scope.form.endDate.$error.invalidDate) {
-    //        $scope.form.startDate.$setValidity("endBeforeStart", true);  //already invalid (per validDate directive)
-    //    } else {
-    //        //depending on whether the user used the date picker or typed it, this will be different (text or date type).  
-    //        //creating a new date object takes care of that.  
-    //        var endDate = new Date($scope.model.Template.EndDate);
-    //        var startDate = new Date($scope.model.Template.StartDate);
-    //        $scope.form.startDate.$setValidity("endBeforeStart", endDate >= startDate);
-    //    }
-    //}
-
-
-
 
 
 
