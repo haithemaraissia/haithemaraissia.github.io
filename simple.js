@@ -904,6 +904,32 @@ app.controller('myCtrl', function ($scope, $http, $window) {
     $scope.loading = true;
     $scope.valideDate = true;
 
+    function noDataChecking() {
+
+
+
+        $("#NoData").hide();
+
+        if ($scope.Positive == 0 && $scope.Negative == 0 && $scope.Neutral == 0) {
+           
+            $("#chartdiv").hide();
+            $("#googleChart").hide();
+            $("#StatiticsRaw").hide();
+            $("#NoData").show();
+
+            $('#RawStockSelection').collapse('hide');
+            $('#RawDatacollapse').collapse('hide');
+            $('#collapseDateTime').collapse('hide');
+        } else {
+
+            $("#chartdiv").show();
+            $("#googleChart").show();
+            $("#StatiticsRaw").show();
+            $("#NoData").hide();
+        }
+
+    }
+
     $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20csv%20where%20url%3D'www.nasdaq.com%2Fscreening%2Fcompanies-by-name.aspx%3Fletter%3DA%26render%3Ddownload'%20and%20columns%3D'Symbol%2CName%2CLastSale%2CMarketCap%2CIPOyear%2CSector%2CIndustry%2CSummary%2CQuote'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys")
         .then(function (response) {
             if (response.data.query.results != null) {
@@ -919,6 +945,7 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                       $scope.Symbols = response.data.query.results.row;
                   });
             }
+
 
 
             $scope.patterns = [
@@ -974,7 +1001,8 @@ app.controller('myCtrl', function ($scope, $http, $window) {
         })
         .finally(function () {
             $("#spinner").hide();
-        });
+            noDataChecking();
+    });
 
 
     function constructApi(stock, startdate, enddate) {
@@ -995,7 +1023,6 @@ app.controller('myCtrl', function ($scope, $http, $window) {
          $scope.APICall = apiCall;
         return apiCall;
     }
-
 
     function calculate(startdate, enddate) {
 
@@ -1250,8 +1277,8 @@ app.controller('myCtrl', function ($scope, $http, $window) {
                     $('#collapseStatistics').collapse('show');
                     $('#RawStockSelection').collapse('show');
                     $('#RawDatacollapse').collapse('show');
-
-                });
+                    noDataChecking();
+        });
 
     }
 
